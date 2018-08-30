@@ -40,6 +40,22 @@ sounds.music.forEach(sound => sound.volume = 0.1)
 sounds.sfx.forEach(sound => sound.volume = 0.5)
 sounds.music[0].play()
 
+function resize() {
+  let width, height
+
+  if (window.innerWidth / 16 * 9 > window.innerHeight) {
+    height = window.innerHeight
+    width  = Math.floor((window.innerHeight / 9 * 16))
+  } else {
+    width  = window.innerWidth
+    height = Math.floor((window.innerWidth / 16 * 9))
+  }
+
+  app.view.style.width  = width + 'px'
+  app.view.style.height = height + 'px'
+}
+
+resize()
 drawTitleScreen(app, state, sounds)
 
 document.body.addEventListener('contextmenu', e => e.preventDefault())
@@ -67,17 +83,4 @@ window.addEventListener('mouseup', function() {
   }
 })
 
-window.addEventListener('resize', function() {
-  let width, height
-
-  if (window.innerWidth / 16 * 9 > window.innerHeight) {
-    height = window.innerHeight
-    width  = Math.floor((window.innerHeight / 9 * 16))
-  } else {
-    width  = window.innerWidth
-    height = Math.floor((window.innerWidth / 16 * 9))
-  }
-
-  app.view.style.width  = width + 'px'
-  app.view.style.height = height + 'px'
-})
+window.addEventListener('resize', () => resize())
