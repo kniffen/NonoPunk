@@ -3,3 +3,5 @@
 NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game made with [Pixi.JS](http://www.pixijs.com/)
 
 Try it out here https://snurr-games.github.io/NonoPunk/
+
+![Screenshot](screenshot.png "Screenshot")
