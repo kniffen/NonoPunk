@@ -5,11 +5,11 @@ function button({ name, wide, width, height, x, y }) {
   let texture, textureFilled
 
   if (wide) {
-    texture       = Texture.fromImage('../assets/btn-wide.png')
-    textureFilled = Texture.fromImage('../assets/btn-wide-filled.png')
+    texture       = Texture.fromImage('assets/btn-wide.png')
+    textureFilled = Texture.fromImage('assets/btn-wide-filled.png')
   } else {
-    texture       = Texture.fromImage('../assets/btn.png')
-    textureFilled = Texture.fromImage('../assets/btn-filled.png')
+    texture       = Texture.fromImage('assets/btn.png')
+    textureFilled = Texture.fromImage('assets/btn-filled.png')
   }
 
   const btn = new Container()

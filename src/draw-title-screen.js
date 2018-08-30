@@ -11,7 +11,7 @@ export default function drawTitleScreen(app, state, sounds) {
   app.stage.removeChildren()
 
   // Logo
-  const logo = Sprite.fromImage('../assets/logo.png')
+  const logo = Sprite.fromImage('assets/logo.png')
 
   logo.width  = app.view.width * 0.5
   logo.height = logo._width / 950 * 161

@@ -41759,7 +41759,7 @@ module.exports = {
 },{}],193:[function(require,module,exports){
 module.exports={
   "name": "NonoPunk",
-  "version": "1.0.0-beta",
+  "version": "1.0.1-beta",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -41919,11 +41919,11 @@ function button(_ref) {
       textureFilled = void 0;
 
   if (wide) {
-    texture = _pixi.Texture.fromImage('../assets/btn-wide.png');
-    textureFilled = _pixi.Texture.fromImage('../assets/btn-wide-filled.png');
+    texture = _pixi.Texture.fromImage('assets/btn-wide.png');
+    textureFilled = _pixi.Texture.fromImage('assets/btn-wide-filled.png');
   } else {
-    texture = _pixi.Texture.fromImage('../assets/btn.png');
-    textureFilled = _pixi.Texture.fromImage('../assets/btn-filled.png');
+    texture = _pixi.Texture.fromImage('assets/btn.png');
+    textureFilled = _pixi.Texture.fromImage('assets/btn-filled.png');
   }
 
   var btn = new _pixi.Container();
@@ -42652,7 +42652,7 @@ function drawTitleScreen(app, state, sounds) {
   app.stage.removeChildren();
 
   // Logo
-  var logo = _pixi.Sprite.fromImage('../assets/logo.png');
+  var logo = _pixi.Sprite.fromImage('assets/logo.png');
 
   logo.width = app.view.width * 0.5;
   logo.height = logo._width / 950 * 161;
