@@ -1,7 +1,6 @@
 import { Texture, Sprite, Text } from 'pixi.js'
 
 import levels      from '../levels.json'
-import pkg         from '../package.json'
 import drawLevels  from './draw-levels'
 import drawOptions from './draw-options'
 import button      from './button'
@@ -81,7 +80,7 @@ export default function drawTitleScreen(app, state, sounds) {
 
   // Copyright
   const copyright = new Text(
-    `v${pkg.version}\nCOPYRIGHT © 2018 SNURR GAMES`, 
+    'v1.0.2-beta\nCOPYRIGHT © 2018 SNURR GAMES', 
     { fontFamily : 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' }
   )
 

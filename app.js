@@ -41757,43 +41757,6 @@ module.exports = {
 };
 
 },{}],193:[function(require,module,exports){
-module.exports={
-  "name": "NonoPunk",
-  "version": "1.0.1-beta",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "browser-sync start --server --files '**/*.css, **/*.html, ./app.js, !node_modules/**/*' --directory --port 7777 --browser \"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Snurr-Games/NonoPunk.git"
-  },
-  "keywords": [],
-  "author": "Snurr Games",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Snurr-Games/NonoPunk/issues"
-  },
-  "homepage": "https://github.com/Snurr-Games/NonoPunk#readme",
-  "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-latest": "^6.24.1",
-    "babelify": "^8.0.0",
-    "browser-sync": "^2.23.6",
-    "browserify": "^16.2.2",
-    "gulp": "^3.9.1",
-    "gulp-bro": "^1.0.3",
-    "gulp-plumber": "^1.2.0"
-  },
-  "dependencies": {
-    "pixi-sound": "^2.0.3",
-    "pixi.js": "^4.8.1"
-  }
-}
-
-},{}],194:[function(require,module,exports){
 'use strict';
 
 var _pixi = require('pixi.js');
@@ -41848,6 +41811,23 @@ sounds.sfx.forEach(function (sound) {
 });
 sounds.music[0].play();
 
+function resize() {
+  var width = void 0,
+      height = void 0;
+
+  if (window.innerWidth / 16 * 9 > window.innerHeight) {
+    height = window.innerHeight;
+    width = Math.floor(window.innerHeight / 9 * 16);
+  } else {
+    width = window.innerWidth;
+    height = Math.floor(window.innerWidth / 16 * 9);
+  }
+
+  app.view.style.width = width + 'px';
+  app.view.style.height = height + 'px';
+}
+
+resize();
 (0, _drawTitleScreen2.default)(app, state, sounds);
 
 document.body.addEventListener('contextmenu', function (e) {
@@ -41882,22 +41862,10 @@ window.addEventListener('mouseup', function () {
 });
 
 window.addEventListener('resize', function () {
-  var width = void 0,
-      height = void 0;
-
-  if (window.innerWidth / 16 * 9 > window.innerHeight) {
-    height = window.innerHeight;
-    width = Math.floor(window.innerHeight / 9 * 16);
-  } else {
-    width = window.innerWidth;
-    height = Math.floor(window.innerWidth / 16 * 9);
-  }
-
-  app.view.style.width = width + 'px';
-  app.view.style.height = height + 'px';
+  return resize();
 });
 
-},{"../levels.json":1,"./draw-notification":201,"./draw-title-screen":203,"pixi-sound":25,"pixi.js":141}],195:[function(require,module,exports){
+},{"../levels.json":1,"./draw-notification":200,"./draw-title-screen":202,"pixi-sound":25,"pixi.js":141}],194:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41960,7 +41928,7 @@ function button(_ref) {
 
 exports.default = button;
 
-},{"pixi.js":141}],196:[function(require,module,exports){
+},{"pixi.js":141}],195:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42068,7 +42036,7 @@ function drawNum(container, value, x, y, margin) {
   container.addChild(num);
 }
 
-},{"pixi.js":141}],197:[function(require,module,exports){
+},{"pixi.js":141}],196:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42182,7 +42150,7 @@ function drawGame(app, state, sounds) {
   (0, _drawGridDeviders2.default)(board, state);
 }
 
-},{"../levels":1,"./button":195,"./draw-clues":196,"./draw-grid":199,"./draw-grid-deviders":198,"./draw-levels":200,"./draw-title-screen":203,"pixi.js":141}],198:[function(require,module,exports){
+},{"../levels":1,"./button":194,"./draw-clues":195,"./draw-grid":198,"./draw-grid-deviders":197,"./draw-levels":199,"./draw-title-screen":202,"pixi.js":141}],197:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42229,7 +42197,7 @@ function devider(x, y, width, height) {
   return line;
 }
 
-},{"pixi.js":141}],199:[function(require,module,exports){
+},{"pixi.js":141}],198:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42333,7 +42301,7 @@ function drawCell(cell, x, y, width, height, value) {
   }
 }
 
-},{"pixi.js":141}],200:[function(require,module,exports){
+},{"pixi.js":141}],199:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42477,7 +42445,7 @@ function drawLevels(app, state, sounds) {
   app.stage.addChild(backBtn);
 }
 
-},{"../levels.json":1,"./button":195,"./draw-game":197,"./draw-title-screen":203,"pixi.js":141}],201:[function(require,module,exports){
+},{"../levels.json":1,"./button":194,"./draw-game":196,"./draw-title-screen":202,"pixi.js":141}],200:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42506,7 +42474,7 @@ function drawNotification(app, text) {
   app.stage.addChild(banner, title);
 }
 
-},{"pixi.js":141}],202:[function(require,module,exports){
+},{"pixi.js":141}],201:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42615,7 +42583,7 @@ function slider(name, x, y, sounds) {
   return container;
 }
 
-},{"./button":195,"./draw-title-screen":203,"pixi.js":141}],203:[function(require,module,exports){
+},{"./button":194,"./draw-title-screen":202,"pixi.js":141}],202:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42628,10 +42596,6 @@ var _pixi = require('pixi.js');
 var _levels = require('../levels.json');
 
 var _levels2 = _interopRequireDefault(_levels);
-
-var _package = require('../package.json');
-
-var _package2 = _interopRequireDefault(_package);
 
 var _drawLevels = require('./draw-levels');
 
@@ -42724,7 +42688,7 @@ function drawTitleScreen(app, state, sounds) {
   });
 
   // Copyright
-  var copyright = new _pixi.Text('v' + _package2.default.version + '\nCOPYRIGHT \xA9 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
+  var copyright = new _pixi.Text('v1.0.2-beta\nCOPYRIGHT © 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
 
   copyright.x = app.view.width - copyright.width - 20;
   copyright.y = app.view.height - copyright.height - 20;
@@ -42732,4 +42696,4 @@ function drawTitleScreen(app, state, sounds) {
   app.stage.addChild(copyright);
 }
 
-},{"../levels.json":1,"../package.json":193,"./button":195,"./draw-levels":200,"./draw-options":202,"pixi.js":141}]},{},[194]);
+},{"../levels.json":1,"./button":194,"./draw-levels":199,"./draw-options":201,"pixi.js":141}]},{},[193]);
