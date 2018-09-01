@@ -41761,11 +41761,25 @@ module.exports = {
 
 var _pixi = require('pixi.js');
 
-var _pixiSound = require('pixi-sound');
-
 var _levels = require('../levels.json');
 
 var _levels2 = _interopRequireDefault(_levels);
+
+var _sounds = require('./sounds');
+
+var _sounds2 = _interopRequireDefault(_sounds);
+
+var _drawLevels = require('./draw-levels');
+
+var _drawLevels2 = _interopRequireDefault(_drawLevels);
+
+var _drawGame = require('./draw-game');
+
+var _drawGame2 = _interopRequireDefault(_drawGame);
+
+var _drawOptions = require('./draw-options');
+
+var _drawOptions2 = _interopRequireDefault(_drawOptions);
 
 var _drawTitleScreen = require('./draw-title-screen');
 
@@ -41777,58 +41791,33 @@ var _drawNotification2 = _interopRequireDefault(_drawNotification);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = new _pixi.Application({
-  width: window.innerWidth,
-  height: ~~(window.innerWidth / 16 * 9),
-  backgroundColor: 0x090A0C,
-  autoResize: true
-});
+var height = window.innerHeight > 720 ? window.innerHeight : 750;
+var width = height / 9 * 16;
+
+var app = new _pixi.Application({ width: width, height: height, backgroundColor: 0x090A0C, autoResize: true });
 
 document.body.appendChild(app.view);
 
+// Initial state
 var state = {
-  currentLevel: 0,
-  currentProgress: 0,
-  currentValue: -1
+  currentValue: -1,
+  grid: null,
+  solution: null
 };
 
-if (localStorage.state) {
-  state = JSON.parse(localStorage.state);
-} else {
-  localStorage.state = JSON.stringify(state);
-}
+state.currentLevel = parseInt(localStorage.currentLevel) || 0;
+state.currentProgress = parseInt(localStorage.currentProgress) || 0;
 
-var sounds = {
-  music: [_pixiSound.sound.Sound.from('assets/sound/Edge_of_Tomorrow.mp3')],
-  sfx: [_pixiSound.sound.Sound.from('assets/sound/256116__kwahmah-02__click.mp3'), _pixiSound.sound.Sound.from('assets/sound/414763__michorvath__click.mp3')]
-};
-
-sounds.music.forEach(function (sound) {
-  return sound.volume = 0.1;
+_sounds2.default.music.forEach(function (sound) {
+  return sound.volume = parseFloat(localStorage.musicVolume) || 0.1;
 });
-sounds.sfx.forEach(function (sound) {
-  return sound.volume = 0.5;
+_sounds2.default.sfx.forEach(function (sound) {
+  return sound.volume = parseFloat(localStorage.sfxVolume) || 0.5;
 });
-sounds.music[0].play();
 
-function resize() {
-  var width = void 0,
-      height = void 0;
+if (_sounds2.default.music[0].volume > 0.01) _sounds2.default.music[0].play();
 
-  if (window.innerWidth / 16 * 9 > window.innerHeight) {
-    height = window.innerHeight;
-    width = Math.floor(window.innerHeight / 9 * 16);
-  } else {
-    width = window.innerWidth;
-    height = Math.floor(window.innerWidth / 16 * 9);
-  }
-
-  app.view.style.width = width + 'px';
-  app.view.style.height = height + 'px';
-}
-
-resize();
-(0, _drawTitleScreen2.default)(app, state, sounds);
+(0, _drawTitleScreen2.default)(app, state);
 
 document.body.addEventListener('contextmenu', function (e) {
   return e.preventDefault();
@@ -41852,20 +41841,49 @@ window.addEventListener('mouseup', function () {
     }
   }
 
-  if (solved && state.currentLevel == state.currentProgress && state.currentProgress == 99) {
+  if (solved && state.currentLevel == state.currentProgress && state.currentProgress == _levels2.default.length - 1) {
     (0, _drawNotification2.default)(app, 'Game over');
   } else if (solved) {
-    if (state.currentLevel == state.currentProgress) state.currentProgress++;
-    app.stage.getChildByName('btn-next').visible = true;
+    if (state.currentLevel == state.currentProgress) {
+      state.currentProgress++;
+      localStorage.currentProgress = state.currentProgress;
+    }
+
+    if (app.stage.getChildByName('game')) {
+      app.stage.getChildByName('game').getChildByName('btn-next').visible = true;
+    }
+
+    if (app.stage.getChildByName('tutorial')) {
+      app.stage.getChildByName('tutorial').getChildByName('btn-next').visible = true;
+    }
+
     (0, _drawNotification2.default)(app, 'solved');
   }
 });
 
 window.addEventListener('resize', function () {
-  return resize();
+  var height = window.innerHeight > 720 ? window.innerHeight : 750;
+  var width = height / 9 * 16;
+
+  app.renderer.resize(width, height);
+
+  switch (app.stage.children[0].name) {
+    case 'levels':
+      (0, _drawLevels2.default)(app, state);
+      break;
+    case 'game':
+      (0, _drawGame2.default)(app, state);
+      break;
+    case 'options':
+      (0, _drawOptions2.default)(app, state);
+      break;
+    default:
+      (0, _drawTitleScreen2.default)(app, state);
+      break;
+  }
 });
 
-},{"../levels.json":1,"./draw-notification":200,"./draw-title-screen":202,"pixi-sound":25,"pixi.js":141}],194:[function(require,module,exports){
+},{"../levels.json":1,"./draw-game":196,"./draw-levels":199,"./draw-notification":200,"./draw-options":201,"./draw-title-screen":202,"./sounds":205,"pixi.js":141}],194:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41873,6 +41891,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _pixi = require('pixi.js');
+
+var _sounds = require('./sounds');
+
+var _sounds2 = _interopRequireDefault(_sounds);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function button(_ref) {
   var name = _ref.name,
@@ -41913,7 +41937,9 @@ function button(_ref) {
   text.x = width / 2 - text.width / 2;
   text.y = height / 2 - text.height / 2;
 
-  btn.on('mouseover', function () {
+  btn.on('click', function () {
+    _sounds2.default.sfx[0].play();
+  }).on('mouseover', function () {
     sprite.texture = textureFilled;
     text.tint = 0x000000;
   }).on('mouseout', function () {
@@ -41928,7 +41954,7 @@ function button(_ref) {
 
 exports.default = button;
 
-},{"pixi.js":141}],195:[function(require,module,exports){
+},{"./sounds":205,"pixi.js":141}],195:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42050,13 +42076,21 @@ var _levels = require('../levels');
 
 var _levels2 = _interopRequireDefault(_levels);
 
-var _button = require('./button');
+var _page = require('./page');
 
-var _button2 = _interopRequireDefault(_button);
+var _page2 = _interopRequireDefault(_page);
+
+var _drawLevels = require('./draw-levels');
+
+var _drawLevels2 = _interopRequireDefault(_drawLevels);
 
 var _drawTitleScreen = require('./draw-title-screen');
 
 var _drawTitleScreen2 = _interopRequireDefault(_drawTitleScreen);
+
+var _drawClues = require('./draw-clues');
+
+var _drawClues2 = _interopRequireDefault(_drawClues);
 
 var _drawGrid = require('./draw-grid');
 
@@ -42066,91 +42100,68 @@ var _drawGridDeviders = require('./draw-grid-deviders');
 
 var _drawGridDeviders2 = _interopRequireDefault(_drawGridDeviders);
 
-var _drawClues = require('./draw-clues');
-
-var _drawClues2 = _interopRequireDefault(_drawClues);
-
-var _drawLevels = require('./draw-levels');
-
-var _drawLevels2 = _interopRequireDefault(_drawLevels);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function drawGame(app, state, sounds) {
+function drawGame(app, state) {
 
   app.stage.removeChildren();
 
-  var title = new _pixi.Text('LEVEL ' + (state.currentLevel + 1), { fontFamily: 'Roboto', fontWeight: '400', fill: 0x23C1B2 });
+  var wrapper = (0, _page2.default)({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'game',
+    buttons: ['next', 'reset', 'back', 'quit']
+  });
   var board = new _pixi.Container();
-
-  title.x = 20;
-  title.y = 20;
 
   board.height = app.view.height * 0.9;
   board.width = board._height / state.grid.length * state.grid[0].length;
   board.x = app.view.width / 2 - board._width / 2;
   board.y = app.view.height / 2 - board._height / 2;
 
-  app.stage.addChild(title, board);
+  wrapper.addChild(board);
 
-  var buttons = ['quit', 'back', 'reset', 'next'];
-  buttons.forEach(function (name, i) {
+  wrapper.getChildByName('btn-next').visible = false;
 
-    var width = app.view.width * 0.11;
-    var height = width / 394 * 84;
-    var x = app.view.width - width - 20;
-    var y = app.view.height - (i * height + i * 20) - height - 20;
-    var btn = (0, _button2.default)({ wide: true, name: name, width: width, height: height, x: x, y: y });
-
-    if (name == 'next') {
-      btn.visible = false;
-    }
-
-    btn.on('click', function () {
-      sounds.sfx[0].play();
-
-      switch (name) {
-        case 'next':
-          state.currentLevel++;
-          state.solution = _levels2.default[state.currentLevel];
-          state.grid = _levels2.default[state.currentLevel].map(function (row) {
-            return row.map(function () {
-              return 0;
-            });
-          });
-          localStorage.state = JSON.stringify(state);
-          drawGame(app, state, sounds);
-          break;
-
-        case 'reset':
-          state.grid = state.grid.map(function (row) {
-            return row.map(function () {
-              return 0;
-            });
-          });
-          localStorage.state = JSON.stringify(state);
-          drawGame(app, state, sounds);
-          break;
-
-        case 'back':
-          (0, _drawLevels2.default)(app, state, sounds);
-          break;
-
-        case 'quit':
-          (0, _drawTitleScreen2.default)(app, state, sounds);
-          break;
-      }
+  wrapper.getChildByName('btn-next').on('click', function () {
+    state.currentLevel++;
+    state.solution = _levels2.default[state.currentLevel];
+    state.grid = _levels2.default[state.currentLevel].map(function (row) {
+      return row.map(function () {
+        return 0;
+      });
     });
 
-    app.stage.addChild(btn);
+    localStorage.currentLevel = state.currentLevel;
+
+    drawGame(app, state);
   });
 
+  wrapper.getChildByName('btn-reset').on('click', function () {
+    state.grid = state.grid.map(function (row) {
+      return row.map(function () {
+        return 0;
+      });
+    });
+    drawGame(app, state);
+  });
+
+  wrapper.getChildByName('btn-back').on('click', function () {
+    (0, _drawLevels2.default)(app, state);
+  });
+
+  wrapper.getChildByName('btn-quit').on('click', function () {
+    (0, _drawTitleScreen2.default)(app, state);
+  });
+
+  app.stage.addChild(wrapper);
+
   (0, _drawClues2.default)(board, state);
-  (0, _drawGrid2.default)(board, state, sounds);
+  (0, _drawGrid2.default)(board, state);
   (0, _drawGridDeviders2.default)(board, state);
 }
 
-},{"../levels":1,"./button":194,"./draw-clues":195,"./draw-grid":198,"./draw-grid-deviders":197,"./draw-levels":199,"./draw-title-screen":202,"pixi.js":141}],197:[function(require,module,exports){
+},{"../levels":1,"./draw-clues":195,"./draw-grid":198,"./draw-grid-deviders":197,"./draw-levels":199,"./draw-title-screen":202,"./page":204,"pixi.js":141}],197:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42207,7 +42218,13 @@ exports.default = drawGrid;
 
 var _pixi = require('pixi.js');
 
-function drawGrid(container, state, sounds) {
+var _sounds = require('./sounds');
+
+var _sounds2 = _interopRequireDefault(_sounds);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function drawGrid(container, state) {
 
   var width = container._width / 1.5 / state.grid[0].length;
   var height = container._height / 1.5 / state.grid.length;
@@ -42233,7 +42250,7 @@ function drawGrid(container, state, sounds) {
 
         state.grid[y][x] = state.currentValue;
         drawCell(cell, posX, posY, width, height, state.grid[y][x]);
-        state.currentValue === 1 ? sounds.sfx[0].play() : sounds.sfx[1].play();
+        state.currentValue === 1 ? _sounds2.default.sfx[0].play() : _sounds2.default.sfx[1].play();
       });
 
       cell.on('mouseover', function (e) {
@@ -42246,7 +42263,7 @@ function drawGrid(container, state, sounds) {
 
         state.grid[y][x] = state.currentValue;
         drawCell(cell, posX, posY, width, height, state.grid[y][x]);
-        state.currentValue === 1 ? sounds.sfx[0].play() : sounds.sfx[1].play();
+        state.currentValue === 1 ? _sounds2.default.sfx[0].play() : _sounds2.default.sfx[1].play();
       });
 
       drawCell(cell, posX, posY, width, height, state.grid[y][x]);
@@ -42301,7 +42318,7 @@ function drawCell(cell, x, y, width, height, value) {
   }
 }
 
-},{"pixi.js":141}],199:[function(require,module,exports){
+},{"./sounds":205,"pixi.js":141}],199:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42327,21 +42344,25 @@ var _drawTitleScreen = require('./draw-title-screen');
 
 var _drawTitleScreen2 = _interopRequireDefault(_drawTitleScreen);
 
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function drawLevels(app, state, sounds) {
+function drawLevels(app, state) {
 
   app.stage.removeChildren();
 
-  // Page title
-  var pageTitle = new _pixi.Text('LEVELS', { fontFamily: 'Roboto', fontWeight: '400', fill: 0x23C1B2 });
+  var wrapper = (0, _page2.default)({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'Levels',
+    buttons: ['back']
+  });
 
-  pageTitle.x = 20;
-  pageTitle.y = 20;
+  app.stage.addChild(wrapper);
 
-  app.stage.addChild(pageTitle);
-
-  // 
   var parsedLevels = _levels2.default.map(function (data, id) {
     return { id: id, data: data };
   });
@@ -42366,7 +42387,7 @@ function drawLevels(app, state, sounds) {
     container.height = title.height + difficulty.levels.length / columns * dim + margin;
 
     container.x = 20;
-    container.y = pageTitle.y + pageTitle.height * 2;
+    container.y = 80;
 
     for (var j = 0; j < i; j++) {
       container.y += difficulties[j].levels.length / columns * dim + dim + margin;
@@ -42404,8 +42425,6 @@ function drawLevels(app, state, sounds) {
       btn.on('click', function (e) {
         if (level.id > state.currentProgress) return;
 
-        sounds.sfx[0].play();
-
         state.currentLevel = level.id;
         state.solution = _levels2.default[level.id];
         state.grid = _levels2.default[level.id].map(function (row) {
@@ -42413,9 +42432,10 @@ function drawLevels(app, state, sounds) {
             return 0;
           });
         });
-        localStorage.state = JSON.stringify(state);
 
-        (0, _drawGame2.default)(app, state, sounds);
+        localStorage.currentLevel = state.currentLevel;
+
+        (0, _drawGame2.default)(app, state);
       });
 
       container.addChild(btn);
@@ -42424,28 +42444,12 @@ function drawLevels(app, state, sounds) {
     app.stage.addChild(container);
   });
 
-  // Back button
-  var backBtnWidth = app.view.width * 0.11;
-  var backBtnHeight = backBtnWidth / 394 * 84;
-
-  var backBtn = (0, _button2.default)({
-    wide: true,
-    name: 'Back',
-    width: backBtnWidth,
-    height: backBtnHeight,
-    x: app.view.width - backBtnWidth - 20,
-    y: app.view.height - backBtnHeight - 20
+  wrapper.getChildByName('btn-back').on('click', function () {
+    return (0, _drawTitleScreen2.default)(app, state);
   });
-
-  backBtn.on('click', function () {
-    sounds.sfx[0].play();
-    (0, _drawTitleScreen2.default)(app, state, sounds);
-  });
-
-  app.stage.addChild(backBtn);
 }
 
-},{"../levels.json":1,"./button":194,"./draw-game":196,"./draw-title-screen":202,"pixi.js":141}],200:[function(require,module,exports){
+},{"../levels.json":1,"./button":194,"./draw-game":196,"./draw-title-screen":202,"./page":204,"pixi.js":141}],200:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42457,21 +42461,24 @@ var _pixi = require('pixi.js');
 
 function drawNotification(app, text) {
 
+  var container = new _pixi.Container();
   var banner = new _pixi.Graphics();
-  var title = new _pixi.Text(text.toUpperCase(), { fontFamily: 'Roboto', fontWeight: '400', fontSize: 40, fill: 0x23C1B2 });
+  var title = new _pixi.Text(text.toUpperCase(), { fontFamily: 'Roboto', fontWeight: '400', fontSize: 30, fill: 0x23C1B2 });
 
-  banner.width = app.view.width;
-  banner.height = 100;
+  container.name = 'notification';
+  container.width = app.view.width;
+  container.height = 60;
   banner.lineStyle(2, 0x23C1B2);
   banner.beginFill(0x28635C);
-  banner.drawRect(-2, 0, banner._width + 4, banner._height);
+  banner.drawRect(-2, 0, container._width + 4, container._height);
   banner.endFill();
 
-  banner.y = app.view.height / 2 - banner._height / 2;
-  title.y = app.view.height / 2 - title.height / 2;
-  title.x = app.view.width / 2 - title.width / 2;
+  container.y = 70;
+  title.y = title.height / 2 - 4;
+  title.x = container._width / 2 - title.width / 2;
 
-  app.stage.addChild(banner, title);
+  container.addChild(banner, title);
+  app.stage.addChild(container);
 }
 
 },{"pixi.js":141}],201:[function(require,module,exports){
@@ -42484,48 +42491,40 @@ exports.default = drawOptions;
 
 var _pixi = require('pixi.js');
 
+var _sounds = require('./sounds');
+
+var _sounds2 = _interopRequireDefault(_sounds);
+
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
 var _drawTitleScreen = require('./draw-title-screen');
 
 var _drawTitleScreen2 = _interopRequireDefault(_drawTitleScreen);
 
-var _button = require('./button');
-
-var _button2 = _interopRequireDefault(_button);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function drawOptions(app, state, sounds) {
+function drawOptions(app, state) {
 
   app.stage.removeChildren();
 
-  // Title
-  var title = new _pixi.Text('OPTIONS', { fontFamily: 'Roboto', fontWeight: '400', fill: 0x23C1B2 });
-
-  title.x = 20;
-  title.y = 20;
-
-  var musicSlider = slider('music volume', 20, title.height + 80, sounds.music);
-  var sfxSlider = slider('sfx volume', 20, musicSlider.y + musicSlider.height + 40, sounds.sfx);
-
-  // Back button
-  var backBtnWidth = app.view.width * 0.11;
-  var backBtnHeight = backBtnWidth / 394 * 84;
-
-  var btn = (0, _button2.default)({
-    wide: true,
-    name: 'Back',
-    width: backBtnWidth,
-    height: backBtnHeight,
-    x: app.view.width - backBtnWidth - 20,
-    y: app.view.height - backBtnHeight - 20
+  var wrapper = (0, _page2.default)({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'options',
+    buttons: ['back']
   });
 
-  btn.on('click', function () {
-    sounds.sfx[0].play();
-    (0, _drawTitleScreen2.default)(app, state, sounds);
+  var musicSlider = slider('music volume', 20, 100, _sounds2.default.music);
+  var sfxSlider = slider('sfx volume', 20, musicSlider.y + musicSlider.height + 40, _sounds2.default.sfx);
+
+  wrapper.getChildByName('btn-back').on('click', function () {
+    return (0, _drawTitleScreen2.default)(app, state);
   });
 
-  app.stage.addChild(title, musicSlider, sfxSlider, btn);
+  wrapper.addChild(musicSlider, sfxSlider);
+  app.stage.addChild(wrapper);
 }
 
 function slider(name, x, y, sounds) {
@@ -42561,11 +42560,20 @@ function slider(name, x, y, sounds) {
 
   draw(500 * sounds[0].volume);
 
+  var changeVolume = function changeVolume(volume) {
+    sounds.forEach(function (sound) {
+      sound.volume = volume;
+      sound.muted = volume < 0.01;
+    });
+
+    if (name == 'music volume') localStorage.musicVolume = volume;
+    if (name == 'sfx volume') localStorage.sfxVolume = volume;
+  };
+
   bar.on('click', function (e) {
     draw(e.data.global.x - 20);
-    sounds.forEach(function (sound) {
-      return sound.volume = 1 / 500 * (e.data.global.x - 20);
-    });
+    changeVolume(1 / 500 * (e.data.global.x - 20));
+    if (!sounds[0].isPlaying) sounds[0].play();
   });
 
   bar.on('mousemove', function (e) {
@@ -42573,9 +42581,7 @@ function slider(name, x, y, sounds) {
     if (e.data.global.x < container.x || e.data.global.x > container.x + bar._width || e.data.global.y < container.y + bar.y || e.data.global.y > container.y + bar.y + bar._height || e.data.buttons !== 1) return;
 
     draw(e.data.global.x - 20);
-    sounds.forEach(function (sound) {
-      return sound.volume = 1 / 500 * (e.data.global.x - 20);
-    });
+    changeVolume(1 / 500 * (e.data.global.x - 20));
   });
 
   container.addChild(title, bar);
@@ -42583,7 +42589,7 @@ function slider(name, x, y, sounds) {
   return container;
 }
 
-},{"./button":194,"./draw-title-screen":202,"pixi.js":141}],202:[function(require,module,exports){
+},{"./draw-title-screen":202,"./page":204,"./sounds":205,"pixi.js":141}],202:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42596,6 +42602,10 @@ var _pixi = require('pixi.js');
 var _levels = require('../levels.json');
 
 var _levels2 = _interopRequireDefault(_levels);
+
+var _drawTutorial = require('./draw-tutorial');
+
+var _drawTutorial2 = _interopRequireDefault(_drawTutorial);
 
 var _drawLevels = require('./draw-levels');
 
@@ -42611,7 +42621,7 @@ var _button2 = _interopRequireDefault(_button);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function drawTitleScreen(app, state, sounds) {
+function drawTitleScreen(app, state) {
 
   app.stage.removeChildren();
 
@@ -42626,8 +42636,9 @@ function drawTitleScreen(app, state, sounds) {
   app.stage.addChild(logo);
 
   // Buttons
-  var buttons = ['how to play', 'options', 'new game', 'continue'];
+  var buttons = ['tutorial', 'continue', 'new game', 'options'];
 
+  buttons.reverse();
   buttons.forEach(function (name, i) {
 
     var width = app.view.width * 0.25;
@@ -42642,11 +42653,13 @@ function drawTitleScreen(app, state, sounds) {
     }
 
     btn.on('click', function () {
-      sounds.sfx[0].play();
-
       switch (name) {
+        case 'tutorial':
+          (0, _drawTutorial2.default)(app, state);
+          break;
+
         case 'continue':
-          (0, _drawLevels2.default)(app, state, sounds);
+          (0, _drawLevels2.default)(app, state);
           break;
 
         case 'new game':
@@ -42661,25 +42674,15 @@ function drawTitleScreen(app, state, sounds) {
               return 0;
             });
           });
-          localStorage.state = JSON.stringify(state);
-          (0, _drawLevels2.default)(app, state, sounds);
+
+          localStorage.currentLevel = state.currentLevel;
+          localStorage.currentProgress = state.currentProgress;
+
+          (0, _drawLevels2.default)(app, state);
           break;
 
         case 'options':
-          (0, _drawOptions2.default)(app, state, sounds);
-          break;
-
-        case 'how to play':
-          var a = document.createElement('a');
-
-          a.target = '_blank';
-          a.href = 'https://en.wikipedia.org/wiki/Nonogram';
-
-          document.body.appendChild(a);
-
-          a.click();
-
-          document.body.removeChild(a);
+          (0, _drawOptions2.default)(app, state);
           break;
       }
     });
@@ -42688,7 +42691,7 @@ function drawTitleScreen(app, state, sounds) {
   });
 
   // Copyright
-  var copyright = new _pixi.Text('v1.0.2-beta\nCOPYRIGHT © 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
+  var copyright = new _pixi.Text('v1.1.0-beta\nCOPYRIGHT © 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
 
   copyright.x = app.view.width - copyright.width - 20;
   copyright.y = app.view.height - copyright.height - 20;
@@ -42696,4 +42699,191 @@ function drawTitleScreen(app, state, sounds) {
   app.stage.addChild(copyright);
 }
 
-},{"../levels.json":1,"./button":194,"./draw-levels":199,"./draw-options":201,"pixi.js":141}]},{},[193]);
+},{"../levels.json":1,"./button":194,"./draw-levels":199,"./draw-options":201,"./draw-tutorial":203,"pixi.js":141}],203:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = drawTutorial;
+
+var _pixi = require('pixi.js');
+
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
+var _drawClues = require('./draw-clues');
+
+var _drawClues2 = _interopRequireDefault(_drawClues);
+
+var _drawGrid = require('./draw-grid');
+
+var _drawGrid2 = _interopRequireDefault(_drawGrid);
+
+var _drawGridDeviders = require('./draw-grid-deviders');
+
+var _drawGridDeviders2 = _interopRequireDefault(_drawGridDeviders);
+
+var _drawNotification = require('./draw-notification');
+
+var _drawNotification2 = _interopRequireDefault(_drawNotification);
+
+var _drawTitleScreen = require('./draw-title-screen');
+
+var _drawTitleScreen2 = _interopRequireDefault(_drawTitleScreen);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var levels = [[[1, 1, 1, 1, 1]], [[0, 1, 1, 1, 1]], [[1, 1, 0, 1, 1]], [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]]];
+
+function drawTutorial(app, state) {
+
+  app.stage.removeChildren();
+
+  var wrapper = (0, _page2.default)({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'tutorial',
+    buttons: ['next', 'back']
+  });
+  app.stage.addChild(wrapper);
+
+  var level = 0;
+
+  state.solution = levels[level];
+  state.grid = levels[level].map(function (row) {
+    return row.map(function () {
+      return 0;
+    });
+  });
+
+  var board = new _pixi.Container();
+
+  var adjustBoard = function adjustBoard() {
+    board.height = ~~(wrapper.height * (state.grid.length > 3 ? 0.5 : 0.2));
+    board.width = board._height / state.grid.length * state.grid[0].length;
+    board.x = app.view.width / 2 - board._width / 2;
+    board.y = app.view.height / 2 - board._height / 2;
+  };
+  adjustBoard();
+
+  wrapper.addChild(board);
+
+  (0, _drawNotification2.default)(app, 'Left click on tiles to fill them');
+  (0, _drawClues2.default)(board, state);
+  (0, _drawGrid2.default)(board, state);
+  (0, _drawGridDeviders2.default)(board, state);
+
+  wrapper.getChildByName('btn-next').visible = false;
+
+  wrapper.getChildByName('btn-next').on('click', function () {
+
+    wrapper.getChildByName('btn-next').visible = false;
+
+    board.removeChildren();
+
+    if (level == 3) {
+      state.grid = null;
+      state.solution = null;
+      (0, _drawTitleScreen2.default)(app, state);
+      return;
+    }
+
+    level++;
+
+    state.solution = levels[level];
+    state.grid = levels[level].map(function (row) {
+      return row.map(function () {
+        return 0;
+      });
+    });
+
+    adjustBoard();
+
+    (0, _drawClues2.default)(board, state);
+    (0, _drawGrid2.default)(board, state);
+    (0, _drawGridDeviders2.default)(board, state);
+
+    if (level == 1) {
+      (0, _drawNotification2.default)(app, 'The numbers tell how many tiles are filled in a row/column');
+    } else if (level == 2) {
+      (0, _drawNotification2.default)(app, 'Sometimes there\'s a space between a row of numbers');
+    } else if (level == 3) {
+      (0, _drawNotification2.default)(app, 'You can right click to indicate empty tiles');
+    }
+  });
+
+  wrapper.getChildByName('btn-back').on('click', function () {
+    state.grid = null;
+    state.solution = null;
+    (0, _drawTitleScreen2.default)(app, state);
+  });
+}
+
+},{"./draw-clues":195,"./draw-grid":198,"./draw-grid-deviders":197,"./draw-notification":200,"./draw-title-screen":202,"./page":204,"pixi.js":141}],204:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = page;
+
+var _pixi = require('pixi.js');
+
+var _button = require('./button');
+
+var _button2 = _interopRequireDefault(_button);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function page(_ref) {
+  var width = _ref.width,
+      height = _ref.height,
+      name = _ref.name,
+      buttons = _ref.buttons;
+
+
+  var container = new _pixi.Container();
+  var title = new _pixi.Text(name.toUpperCase(), { fontFamily: 'Roboto', fontWeight: '400', fill: 0x23C1B2 });
+
+  container.name = name.toLowerCase();
+  title.x = 20;
+  title.y = 20;
+
+  container.addChild(title);
+
+  if (buttons) {
+    buttons.reverse();
+    buttons.forEach(function (id, i) {
+      var btn = (0, _button2.default)({
+        wide: true,
+        name: id,
+        width: 160,
+        height: 40,
+        x: width - 180,
+        y: height - (i + 1) * 40 - (i + 1) * 20
+      });
+
+      container.addChild(btn);
+    });
+  }
+
+  return container;
+}
+
+},{"./button":194,"pixi.js":141}],205:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _pixiSound = require('pixi-sound');
+
+exports.default = {
+  music: [_pixiSound.sound.Sound.from('assets/sound/Edge_of_Tomorrow.mp3')],
+  sfx: [_pixiSound.sound.Sound.from('assets/sound/256116__kwahmah-02__click.mp3'), _pixiSound.sound.Sound.from('assets/sound/414763__michorvath__click.mp3')]
+};
+
+},{"pixi-sound":25}]},{},[193]);

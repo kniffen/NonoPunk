@@ -79,7 +79,7 @@ export default function drawTitleScreen(app, state) {
 
   // Copyright
   const copyright = new Text(
-    'v1.0.2-beta\nCOPYRIGHT © 2018 SNURR GAMES', 
+    'v1.1.0-beta\nCOPYRIGHT © 2018 SNURR GAMES', 
     { fontFamily : 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' }
   )
 
