@@ -2,15 +2,16 @@ import { Application, Container } from 'pixi.js'
 
 import levels           from '../levels.json'
 import sounds           from './sounds'
+import drawLevels       from './draw-levels'
+import drawGame         from './draw-game'
+import drawOptions      from './draw-options'
 import drawTitleScreen  from './draw-title-screen'
 import drawNotification from './draw-notification'
 
-const app = new Application({
-  width: window.innerWidth,
-  height: ~~(window.innerWidth / 16 * 9),
-  backgroundColor: 0x090A0C,
-  autoResize: true,
-})
+const height = window.innerHeight > 720 ? window.innerHeight : 750
+const width  = height / 9 * 16
+
+const app = new Application({width, height, backgroundColor: 0x090A0C, autoResize: true})
 
 document.body.appendChild(app.view)
 
@@ -29,22 +30,6 @@ sounds.sfx.forEach(sound   => sound.volume = parseFloat(localStorage.sfxVolume) 
 
 if (sounds.music[0].volume > 0.01) sounds.music[0].play()
 
-function resize() {
-  let width, height
-
-  if (window.innerWidth / 16 * 9 > window.innerHeight) {
-    height = window.innerHeight
-    width  = Math.floor((window.innerHeight / 9 * 16))
-  } else {
-    width  = window.innerWidth
-    height = Math.floor((window.innerWidth / 16 * 9))
-  }
-
-  app.view.style.width  = width + 'px'
-  app.view.style.height = height + 'px'
-}
-
-resize()
 drawTitleScreen(app, state)
 
 document.body.addEventListener('contextmenu', e => e.preventDefault())
@@ -75,4 +60,24 @@ window.addEventListener('mouseup', function() {
   }
 })
 
-window.addEventListener('resize', () => resize())
+window.addEventListener('resize', () => {
+  const height = window.innerHeight > 720 ? window.innerHeight : 750
+  const width  = height / 9 * 16
+
+  app.renderer.resize(width, height)
+
+  switch (app.stage.children[0].name) {
+    case 'levels':
+      drawLevels(app, state)
+      break
+    case 'game':
+      drawGame(app, state)
+      break
+    case 'options':
+      drawOptions(app, state)
+      break
+    default:
+      drawTitleScreen(app, state)
+      break
+  }
+})

@@ -17,6 +17,8 @@ export default function drawLevels(app, state) {
     buttons: ['back']
   })
 
+  app.stage.addChild(wrapper)
+
   const parsedLevels = levels.map((data, id) => ({id, data}))
   const difficulties = [
     {name: '5x5',   levels: parsedLevels.filter(level => level.data.length === 5)},
@@ -98,7 +100,5 @@ export default function drawLevels(app, state) {
   })
 
   wrapper.getChildByName('btn-back').on('click', () => drawTitleScreen(app, state))
-
-  app.stage.addChild(wrapper)
 
 }
