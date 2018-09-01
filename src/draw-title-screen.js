@@ -1,6 +1,7 @@
 import { Texture, Sprite, Text } from 'pixi.js'
 
 import levels       from '../levels.json'
+import drawTutorial from './draw-tutorial'
 import drawLevels   from './draw-levels'
 import drawOptions  from './draw-options'
 import button       from './button'
@@ -20,8 +21,14 @@ export default function drawTitleScreen(app, state) {
   app.stage.addChild(logo)
 
   // Buttons
-  const buttons = ['how to play', 'options', 'new game', 'continue']
-
+  const buttons = [
+    'tutorial',
+    'continue',
+    'new game',
+    'options'
+  ]
+  
+  buttons.reverse()
   buttons.forEach((name, i) => {
 
     const width  = app.view.width * 0.25
@@ -37,6 +44,10 @@ export default function drawTitleScreen(app, state) {
 
     btn.on('click',     () => {
       switch (name) {
+        case 'tutorial':
+          drawTutorial(app, state)
+          break
+
         case 'continue':
           drawLevels(app, state)
           break
@@ -58,19 +69,6 @@ export default function drawTitleScreen(app, state) {
 
         case 'options':
           drawOptions(app, state)
-          break
-
-        case 'how to play':
-          const a = document.createElement('a')
-          
-          a.target = '_blank'
-          a.href = 'https://en.wikipedia.org/wiki/Nonogram'
-          
-          document.body.appendChild(a)
-          
-          a.click()
-          
-          document.body.removeChild(a)
           break
       }
     })
