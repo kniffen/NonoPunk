@@ -59,9 +59,21 @@ function slider(name, x, y, sounds) {
 
   draw(500 * sounds[0].volume)
 
+  const changeVolume = (volume) => {
+    sounds.forEach(sound => {
+      sound.volume = volume
+      sound.muted = volume < 0.01
+    })
+
+    if (name == 'music volume') localStorage.musicVolume = volume
+    if (name == 'sfx volume')   localStorage.sfxVolume   = volume
+  }
+
   bar.on('click', (e) => {
     draw(e.data.global.x - 20)
-    sounds.forEach(sound => sound.volume = 1 / 500 * (e.data.global.x - 20))
+    changeVolume(1 / 500 * (e.data.global.x - 20))
+    if (!sounds[0].isPlaying) sounds[0].play()
+
   })
 
   bar.on('mousemove', (e) => {
@@ -73,9 +85,9 @@ function slider(name, x, y, sounds) {
     ) return
 
     draw(e.data.global.x - 20)
-    sounds.forEach(sound => sound.volume = 1 / 500 * (e.data.global.x - 20))
-  })
+    changeVolume(1 / 500 * (e.data.global.x - 20))
 
+  })
 
   container.addChild(title, bar)
 

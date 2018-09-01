@@ -49,7 +49,10 @@ export default function drawTitleScreen(app, state) {
           state.currentProgress = 0
           state.solution = levels[0]
           state.grid     = levels[0].map(row => row.map(() => 0))
-          localStorage.state = JSON.stringify(state)
+          
+          localStorage.currentLevel    = state.currentLevel
+          localStorage.currentProgress = state.currentProgress
+
           drawLevels(app, state)
           break
 

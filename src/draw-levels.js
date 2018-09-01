@@ -83,7 +83,8 @@ export default function drawLevels(app, state) {
         state.currentLevel = level.id
         state.solution     = levels[level.id]
         state.grid         = levels[level.id].map(row => row.map(() => 0))
-        localStorage.state = JSON.stringify(state)
+        
+        localStorage.currentLevel = state.currentLevel
         
         drawGame(app, state)
       })

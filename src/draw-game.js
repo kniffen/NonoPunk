@@ -15,7 +15,7 @@ export default function drawGame(app, state) {
   const wrapper = page({
     width: app.view.width,
     height: app.view.height,
-    name: 'options',
+    name: 'game',
     buttons: ['next', 'reset', 'back', 'quit']
   })
   const board   = new Container()
@@ -32,14 +32,15 @@ export default function drawGame(app, state) {
   wrapper.getChildByName('btn-next').on('click', () => {
     state.currentLevel++
     state.solution = levels[state.currentLevel]
-    state.grid = levels[state.currentLevel].map(row => row.map(() => 0))
-    localStorage.state = JSON.stringify(state)
+    state.grid     = levels[state.currentLevel].map(row => row.map(() => 0))
+    
+    localStorage.currentLevel = state.currentLevel
+    
     drawGame(app, state)
   })
 
   wrapper.getChildByName('btn-reset').on('click', () => {
     state.grid = state.grid.map(row => row.map(() => 0))
-    localStorage.state = JSON.stringify(state)
     drawGame(app, state)
   })
 

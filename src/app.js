@@ -14,21 +14,20 @@ const app = new Application({
 
 document.body.appendChild(app.view)
 
-let state = {
-  currentLevel: 0,
-  currentProgress: 0,
+// Initial state
+const state = {
   currentValue: -1,
+  grid: null,
+  solution: null
 }
 
-if (localStorage.state) {
-  state = JSON.parse(localStorage.state)
-} else {
-  localStorage.state = JSON.stringify(state)
-}
+state.currentLevel    = parseInt(localStorage.currentLevel)    || 0
+state.currentProgress = parseInt(localStorage.currentProgress) || 0
 
-sounds.music.forEach(sound => sound.volume = 0.1)
-sounds.sfx.forEach(sound   => sound.volume = 0.5)
-sounds.music[0].play()
+sounds.music.forEach(sound => sound.volume = parseFloat(localStorage.musicVolume) || 0.1)
+sounds.sfx.forEach(sound   => sound.volume = parseFloat(localStorage.sfxVolume)   || 0.5)
+
+if (sounds.music[0].volume > 0.01) sounds.music[0].play()
 
 function resize() {
   let width, height
@@ -64,11 +63,14 @@ window.addEventListener('mouseup', function() {
     }
   }
 
-  if (solved && state.currentLevel == state.currentProgress && state.currentProgress == 99){
+  if (solved && state.currentLevel == state.currentProgress && state.currentProgress == levels.length - 1){
     drawNotification(app, 'Game over')
   } else if (solved) {
-    if (state.currentLevel == state.currentProgress) state.currentProgress++
-    app.stage.getChildByName('btn-next').visible = true
+    if (state.currentLevel == state.currentProgress) {
+      state.currentProgress++
+      localStorage.currentProgress = state.currentProgress
+    }
+    app.stage.getChildByName('game').getChildByName('btn-next').visible = true
     drawNotification(app, 'solved')
   }
 })
