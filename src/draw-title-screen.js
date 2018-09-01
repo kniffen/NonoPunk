@@ -22,9 +22,9 @@ export default function drawTitleScreen(app, state) {
 
   // Buttons
   const buttons = [
-    'tutorial',
     'continue',
     'new game',
+    'tutorial',
     'options'
   ]
   
