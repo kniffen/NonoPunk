@@ -55,8 +55,17 @@ window.addEventListener('mouseup', function() {
       state.currentProgress++
       localStorage.currentProgress = state.currentProgress
     }
-    app.stage.getChildByName('game').getChildByName('btn-next').visible = true
+    
+    if (app.stage.getChildByName('game') ) {
+      app.stage.getChildByName('game').getChildByName('btn-next').visible = true
+    }
+    
+    if (app.stage.getChildByName('tutorial') ) {
+      app.stage.getChildByName('tutorial').getChildByName('btn-next').visible = true
+    }
+
     drawNotification(app, 'solved')
+
   }
 })
 
