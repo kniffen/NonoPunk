@@ -1,11 +1,11 @@
 import { Texture, Sprite, Text } from 'pixi.js'
 
-import levels      from '../levels.json'
-import drawLevels  from './draw-levels'
-import drawOptions from './draw-options'
-import button      from './button'
+import levels       from '../levels.json'
+import drawLevels   from './draw-levels'
+import drawOptions  from './draw-options'
+import button       from './button'
 
-export default function drawTitleScreen(app, state, sounds) {
+export default function drawTitleScreen(app, state) {
 
   app.stage.removeChildren()
 
@@ -36,11 +36,9 @@ export default function drawTitleScreen(app, state, sounds) {
     }
 
     btn.on('click',     () => {
-      sounds.sfx[0].play()
-
       switch (name) {
         case 'continue':
-          drawLevels(app, state, sounds)
+          drawLevels(app, state)
           break
 
         case 'new game':
@@ -52,11 +50,11 @@ export default function drawTitleScreen(app, state, sounds) {
           state.solution = levels[0]
           state.grid     = levels[0].map(row => row.map(() => 0))
           localStorage.state = JSON.stringify(state)
-          drawLevels(app, state, sounds)
+          drawLevels(app, state)
           break
 
         case 'options':
-          drawOptions(app, state, sounds)
+          drawOptions(app, state)
           break
 
         case 'how to play':

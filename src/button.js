@@ -1,5 +1,7 @@
 import { Container, Text, Texture, Sprite } from 'pixi.js'
 
+import sounds from './sounds'
+
 function button({ name, wide, width, height, x, y }) {
   
   let texture, textureFilled
@@ -32,6 +34,9 @@ function button({ name, wide, width, height, x, y }) {
   text.y = height / 2 - text.height / 2
 
   btn
+    .on('click', () => {
+      sounds.sfx[0].play()
+    })
     .on('mouseover', () => {
       sprite.texture = textureFilled
       text.tint   = 0x000000

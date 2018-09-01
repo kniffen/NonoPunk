@@ -8,7 +8,7 @@ import drawClues        from './draw-clues'
 import drawGrid         from './draw-grid'
 import drawGridDeviders from './draw-grid-deviders'
 
-export default function drawGame(app, state, sounds) {
+export default function drawGame(app, state) {
 
   app.stage.removeChildren()
 
@@ -30,34 +30,30 @@ export default function drawGame(app, state, sounds) {
   wrapper.getChildByName('btn-next').visible = false
 
   wrapper.getChildByName('btn-next').on('click', () => {
-    sounds.sfx[0].play()
     state.currentLevel++
     state.solution = levels[state.currentLevel]
     state.grid = levels[state.currentLevel].map(row => row.map(() => 0))
     localStorage.state = JSON.stringify(state)
-    drawGame(app, state, sounds)
+    drawGame(app, state)
   })
 
   wrapper.getChildByName('btn-reset').on('click', () => {
-    sounds.sfx[0].play()
     state.grid = state.grid.map(row => row.map(() => 0))
     localStorage.state = JSON.stringify(state)
-    drawGame(app, state, sounds)
+    drawGame(app, state)
   })
 
   wrapper.getChildByName('btn-back').on('click', () => {
-    sounds.sfx[0].play()
-    drawLevels(app, state, sounds)
+    drawLevels(app, state)
   })
 
   wrapper.getChildByName('btn-quit').on('click', () => {
-    sounds.sfx[0].play()
-    drawTitleScreen(app, state, sounds)
+    drawTitleScreen(app, state)
   })
 
   app.stage.addChild(wrapper)
 
   drawClues(board, state)
-  drawGrid(board, state, sounds)
+  drawGrid(board, state)
   drawGridDeviders(board, state)
 }

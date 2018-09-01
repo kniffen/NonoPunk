@@ -1,9 +1,10 @@
 import { Container, Graphics, Text } from 'pixi.js'
 
+import sounds          from './sounds'
 import page            from './page'
 import drawTitleScreen from './draw-title-screen'
 
-export default function drawOptions(app, state, sounds) {
+export default function drawOptions(app, state) {
 
   app.stage.removeChildren()
 
@@ -17,10 +18,7 @@ export default function drawOptions(app, state, sounds) {
   const musicSlider = slider('music volume', 20, 100, sounds.music)
   const sfxSlider   = slider('sfx volume',   20, musicSlider.y + musicSlider.height + 40, sounds.sfx)
 
-  wrapper.getChildByName('btn-back').on('click', () => {
-    sounds.sfx[0].play()
-    drawTitleScreen(app, state, sounds)
-  })
+  wrapper.getChildByName('btn-back').on('click', () => drawTitleScreen(app, state))
 
   wrapper.addChild(musicSlider, sfxSlider)
   app.stage.addChild(wrapper)

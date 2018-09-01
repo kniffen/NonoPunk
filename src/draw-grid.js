@@ -1,6 +1,7 @@
 import { Graphics } from 'pixi.js'
+import sounds       from './sounds'
 
-export default function drawGrid(container, state, sounds) {
+export default function drawGrid(container, state) {
 
   const width  = container._width  / 1.5 / state.grid[0].length
   const height = container._height / 1.5 / state.grid.length

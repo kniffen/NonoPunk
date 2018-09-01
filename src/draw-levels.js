@@ -6,7 +6,7 @@ import drawGame from './draw-game'
 import drawTitleScreen from './draw-title-screen'
 import page from './page'
 
-export default function drawLevels(app, state, sounds) {
+export default function drawLevels(app, state) {
 
   app.stage.removeChildren()
 
@@ -80,14 +80,12 @@ export default function drawLevels(app, state, sounds) {
       btn.on('click', e => {
         if (level.id > state.currentProgress) return
 
-        sounds.sfx[0].play()
-        
         state.currentLevel = level.id
         state.solution     = levels[level.id]
         state.grid         = levels[level.id].map(row => row.map(() => 0))
         localStorage.state = JSON.stringify(state)
         
-        drawGame(app, state, sounds)
+        drawGame(app, state)
       })
       
       container.addChild(btn)
@@ -98,10 +96,7 @@ export default function drawLevels(app, state, sounds) {
 
   })
 
-  wrapper.getChildByName('btn-back').on('click', () => {
-    sounds.sfx[0].play()
-    drawTitleScreen(app, state, sounds)
-  })
+  wrapper.getChildByName('btn-back').on('click', () => drawTitleScreen(app, state))
 
   app.stage.addChild(wrapper)
 
