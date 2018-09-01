@@ -1,7 +1,7 @@
 import { Application, Container } from 'pixi.js'
-import { sound }                  from 'pixi-sound'
 
 import levels           from '../levels.json'
+import sounds           from './sounds'
 import drawTitleScreen  from './draw-title-screen'
 import drawNotification from './draw-notification'
 
@@ -26,18 +26,8 @@ if (localStorage.state) {
   localStorage.state = JSON.stringify(state)
 }
 
-const sounds = {
-  music: [
-    sound.Sound.from('assets/sound/Edge_of_Tomorrow.mp3')
-  ],
-  sfx: [
-    sound.Sound.from('assets/sound/256116__kwahmah-02__click.mp3'),
-    sound.Sound.from('assets/sound/414763__michorvath__click.mp3')
-  ]
-}
-
 sounds.music.forEach(sound => sound.volume = 0.1)
-sounds.sfx.forEach(sound => sound.volume = 0.5)
+sounds.sfx.forEach(sound   => sound.volume = 0.5)
 sounds.music[0].play()
 
 function resize() {
@@ -56,7 +46,7 @@ function resize() {
 }
 
 resize()
-drawTitleScreen(app, state, sounds)
+drawTitleScreen(app, state)
 
 document.body.addEventListener('contextmenu', e => e.preventDefault())
 
