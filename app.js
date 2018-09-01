@@ -42636,7 +42636,7 @@ function drawTitleScreen(app, state) {
   app.stage.addChild(logo);
 
   // Buttons
-  var buttons = ['tutorial', 'continue', 'new game', 'options'];
+  var buttons = ['continue', 'new game', 'tutorial', 'options'];
 
   buttons.reverse();
   buttons.forEach(function (name, i) {
@@ -42691,7 +42691,7 @@ function drawTitleScreen(app, state) {
   });
 
   // Copyright
-  var copyright = new _pixi.Text('v1.1.0-beta\nCOPYRIGHT © 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
+  var copyright = new _pixi.Text('v1.1.1-beta\nCOPYRIGHT © 2018 SNURR GAMES', { fontFamily: 'Roboto', fontWeight: '400', fontSize: 10, fill: 0x23C1B2, align: 'right' });
 
   copyright.x = app.view.width - copyright.width - 20;
   copyright.y = app.view.height - copyright.height - 20;
