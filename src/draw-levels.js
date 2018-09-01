@@ -4,20 +4,19 @@ import levels   from '../levels.json'
 import button   from './button'
 import drawGame from './draw-game'
 import drawTitleScreen from './draw-title-screen'
+import page from './page'
 
 export default function drawLevels(app, state, sounds) {
 
   app.stage.removeChildren()
 
-  // Page title
-  const pageTitle = new Text('LEVELS', { fontFamily : 'Roboto', fontWeight: '400', fill: 0x23C1B2  })
-  
-  pageTitle.x = 20
-  pageTitle.y = 20
+  const wrapper = page({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'Levels',
+    buttons: ['back']
+  })
 
-  app.stage.addChild(pageTitle)
-
-  // 
   const parsedLevels = levels.map((data, id) => ({id, data}))
   const difficulties = [
     {name: '5x5',   levels: parsedLevels.filter(level => level.data.length === 5)},
@@ -37,7 +36,7 @@ export default function drawLevels(app, state, sounds) {
     container.height = title.height + difficulty.levels.length / columns * dim + margin
 
     container.x = 20
-    container.y = pageTitle.y + pageTitle.height * 2
+    container.y = 80
 
     for (let j = 0; j < i; j++) {
       container.y += (difficulties[j].levels.length / columns) * dim + dim + margin
@@ -99,24 +98,11 @@ export default function drawLevels(app, state, sounds) {
 
   })
 
-  // Back button
-  const backBtnWidth  = app.view.width * 0.11
-  const backBtnHeight = backBtnWidth / 394 * 84
-
-  const backBtn = button({
-    wide: true,
-    name: 'Back',
-    width: backBtnWidth,
-    height: backBtnHeight,
-    x: app.view.width  - backBtnWidth  - 20,
-    y: app.view.height - backBtnHeight - 20
-  })
-
-  backBtn.on('click', () => {
+  wrapper.getChildByName('btn-back').on('click', () => {
     sounds.sfx[0].play()
     drawTitleScreen(app, state, sounds)
   })
 
-  app.stage.addChild(backBtn)
+  app.stage.addChild(wrapper)
 
 }

@@ -1,40 +1,29 @@
 import { Container, Graphics, Text } from 'pixi.js'
 
+import page            from './page'
 import drawTitleScreen from './draw-title-screen'
-import button          from './button'
 
 export default function drawOptions(app, state, sounds) {
 
   app.stage.removeChildren()
 
-  // Title
-  const title = new Text('OPTIONS', { fontFamily : 'Roboto', fontWeight: '400', fill: 0x23C1B2 })
-
-  title.x = 20
-  title.y = 20
-
-  const musicSlider = slider('music volume', 20, title.height + 80, sounds.music)
-  const sfxSlider   = slider('sfx volume',   20, musicSlider.y + musicSlider.height + 40, sounds.sfx)
-
-  // Back button
-  const backBtnWidth  = app.view.width * 0.11
-  const backBtnHeight = backBtnWidth / 394 * 84
-
-  const btn = button({
-    wide: true,
-    name: 'Back',
-    width: backBtnWidth,
-    height: backBtnHeight,
-    x: app.view.width  - backBtnWidth  - 20,
-    y: app.view.height - backBtnHeight - 20
+  const wrapper = page({
+    width: app.view.width,
+    height: app.view.height,
+    name: 'options',
+    buttons: ['back']
   })
 
-  btn.on('click', () => {
+  const musicSlider = slider('music volume', 20, 100, sounds.music)
+  const sfxSlider   = slider('sfx volume',   20, musicSlider.y + musicSlider.height + 40, sounds.sfx)
+
+  wrapper.getChildByName('btn-back').on('click', () => {
     sounds.sfx[0].play()
     drawTitleScreen(app, state, sounds)
   })
 
-  app.stage.addChild(title, musicSlider, sfxSlider, btn)
+  wrapper.addChild(musicSlider, sfxSlider)
+  app.stage.addChild(wrapper)
 
 }
 
