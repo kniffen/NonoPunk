@@ -60,9 +60,17 @@ export default function drawOptions(app, state) {
     }
   )
 
+  const musicInfo = new Text(
+    'Music: Edge of Tomorrow by TeknoAXE\nLicense: Creative Commons Attribution 4.0 International License',
+    { fontFamily : 'Roboto', fontWeight: '400', fontSize: 14, fill: 0x23C1B2 }
+  )
+
+  musicInfo.x = 20
+  musicInfo.y = wrapper.height - 20
+
   wrapper.getChildByName('btn-back').on('click', () => drawTitleScreen(app, state))
 
-  wrapper.addChild(musicSlider, sfxSlider, colorSlider)
+  wrapper.addChild(musicSlider, sfxSlider, colorSlider, musicInfo)
   app.stage.addChild(wrapper)
 
 }
