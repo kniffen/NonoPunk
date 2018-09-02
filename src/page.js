@@ -7,6 +7,7 @@ export default function page({ width, height, name, buttons }) {
   const title = new Text(name.toUpperCase(), { fontFamily : 'Roboto', fontWeight: '400', fill: 0x23C1B2 })
   
   container.name = name.toLowerCase()
+  title.name = 'page-title'
   title.x = 20
   title.y = 20
 

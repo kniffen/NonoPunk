@@ -18,8 +18,10 @@ export default function drawGame(app, state) {
     name: 'game',
     buttons: ['next', 'reset', 'back', 'quit']
   })
-  const board   = new Container()
 
+  wrapper.getChildByName('page-title').text = 'LEVEL ' + (state.currentLevel + 1)
+
+  const board   = new Container()
   board.height = app.view.height * 0.9
   board.width  = board._height / state.grid.length * state.grid[0].length
   board.x = app.view.width  / 2 - board._width  / 2
