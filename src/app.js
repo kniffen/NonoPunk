@@ -24,6 +24,11 @@ const state = {
 
 state.currentLevel    = parseInt(localStorage.currentLevel)    || 0
 state.currentProgress = parseInt(localStorage.currentProgress) || 0
+state.colorHue        = parseInt(localStorage.colorHue)        || 0
+
+const colorMatrix = new PIXI.filters.ColorMatrixFilter()
+app.stage.filters = [colorMatrix]
+app.stage.filters[0].hue(state.colorHue)
 
 sounds.music.forEach(sound => sound.volume = parseFloat(localStorage.musicVolume) || 0.1)
 sounds.sfx.forEach(sound   => sound.volume = parseFloat(localStorage.sfxVolume)   || 0.5)

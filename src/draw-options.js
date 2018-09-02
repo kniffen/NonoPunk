@@ -48,10 +48,21 @@ export default function drawOptions(app, state) {
     }
   )
 
+  const colorSlider = slider(
+    'Color',
+    20,
+    sfxSlider.y + sfxSlider.height + 40,
+    state.colorHue / 360,
+    val => {
+      app.stage.filters[0].hue(val * 360)
+      state.colorHue = val * 360
+      localStorage.colorHue = val * 360
+    }
+  )
 
   wrapper.getChildByName('btn-back').on('click', () => drawTitleScreen(app, state))
 
-  wrapper.addChild(musicSlider, sfxSlider)
+  wrapper.addChild(musicSlider, sfxSlider, colorSlider)
   app.stage.addChild(wrapper)
 
 }
@@ -70,17 +81,17 @@ function slider(name, x, y, position, cb) {
 
     // Background
     bar.beginFill(0x000000)
-    bar.drawRect(0, title.height + 10, 500, 20)
+    bar.drawRect(0, title.height, 500, 20)
     bar.endFill()
 
     // Slider
     bar.beginFill(0x28635C)
-    bar.drawRect(0, title.height + 10, 500 * pos, 20)
+    bar.drawRect(0, title.height, 500 * pos, 20)
     bar.endFill()
 
     // Border
     bar.lineStyle(2, 0x23C1B2)
-    bar.drawRect(0, title.height + 10, 500, 20)
+    bar.drawRect(0, title.height, 500, 20)
   }
 
   drawBar(position)
@@ -114,37 +125,4 @@ function slider(name, x, y, position, cb) {
   container.addChild(title, bar)
 
   return container
-}
-
-function volumeSlider(name, x, y, sounds) {
-
-  const container = slider(name, x, y, sounds[0].volume)
-
-  const changeVolume = (volume) => {
-    sounds.forEach(sound => {
-      sound.volume = volume
-      sound.muted = volume < 0.01
-    })
-
-    if (name == 'music volume') localStorage.musicVolume = volume
-    if (name == 'sfx volume')   localStorage.sfxVolume   = volume
-  }
-
-  container.on('click', (e) => {
-    changeVolume(1 / 500 * (e.data.global.x - 20))
-    if (!sounds[0].isPlaying) sounds[0].play()
-  })
-
-  container.on('mousemove', (e) => {
-    if (
-      (e.data.global.x < container.x || e.data.global.x > container.x + container._width)  ||
-      (e.data.global.y < container.y + container.y || e.data.global.y > container.y + container.y + container._height) ||
-      e.data.buttons !== 1
-    ) return
-
-    changeVolume(1 / 500 * (e.data.global.x - 20))
-  })
-
-  return container
-
 }
