@@ -1,8 +1,8 @@
-![Logo](assets/logo-alt.png "NonoPunk")
+![Logo](assets/logo.png "NonoPunk")
 
-NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game made with [Pixi.JS](http://www.pixijs.com/)
+NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game
 
-Try it out here https://snurr-games.github.io/NonoPunk/
+Try it out here https://nonopunk.kniffen.dev/
 
 ![Screenshot](screenshot.png "Screenshot")
 
