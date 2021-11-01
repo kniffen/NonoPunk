@@ -1,6 +1,6 @@
 ![Logo](assets/images/logo.png "NonoPunk")
 
-NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game
+NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game made in vanilla JavaScript
 
 Try it out here https://nonopunk.kniffen.dev/
 
