@@ -1,35 +1,24 @@
 {
   "name": "NonoPunk",
-  "version": "1.2.0-beta",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Cyberpunk inspired nonogram game",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "browser-sync start --server --files '**/*.css, **/*.html, ./app.js, !node_modules/**/*' --directory --port 7777 --browser \"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\""
+    "dev": "npx live-server .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Snurr-Games/NonoPunk.git"
+    "url": "git+https://github.com/kniffen/NonoPunk.git"
   },
   "keywords": [],
-  "author": "Snurr Games",
+  "author": "Kniffen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Snurr-Games/NonoPunk/issues"
+    "url": "https://github.com/kniffen/NonoPunk/issues"
   },
-  "homepage": "https://github.com/Snurr-Games/NonoPunk#readme",
+  "homepage": "https://github.com/kniffen/NonoPunk#readme",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-latest": "^6.24.1",
-    "babelify": "^8.0.0",
-    "browser-sync": "^2.23.6",
-    "browserify": "^16.2.2",
-    "gulp": "^3.9.1",
-    "gulp-bro": "^1.0.3",
-    "gulp-plumber": "^1.2.0"
-  },
-  "dependencies": {
-    "pixi-sound": "^2.0.3",
-    "pixi.js": "^4.8.1"
+    "live-server": "^1.2.1"
   }
 }
