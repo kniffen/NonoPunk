@@ -1,4 +1,4 @@
-![Logo](assets/logo.png "NonoPunk")
+![Logo](assets/images/logo.png "NonoPunk")
 
 NonoPunk is a [Nonogram](https://en.wikipedia.org/wiki/Nonogram) game
 
